@@ -2,7 +2,7 @@
 // active list with a button per line, adding by name, Paste List, Copy List, Clear Done, the other
 // lists, and the settings.
 import { Player, system } from "@minecraft/server";
-import { ActionFormData, FormCancelationReason, MessageFormData, ModalFormData } from "@minecraft/server-ui";
+import { ActionFormData, FormCancelationReason, FormRejectError, FormRejectReason, MessageFormData, ModalFormData } from "@minecraft/server-ui";
 import { CORNERS, CORNER_NAMES, Counted, MAX_HUD_LINES, activeList, addList, clampNeed, clearDone, deleteList, entryName, itemName, newList, ofItem, readListText, renameList, writeListText, topUp } from "./list-logic.js";
 import { dataOf, saveData } from "./store.js";
 import { counted } from "./count.js";
@@ -14,7 +14,14 @@ const wait = (ticks: number) => new Promise<void>((r) => system.runTimeout(() =>
 /** Shows a form, waiting while the player is still in another screen (the chat, after a command), up to about ten seconds. */
 async function show<T extends { canceled: boolean; cancelationReason?: FormCancelationReason }>(form: { show(p: Player): Promise<T> }, player: Player): Promise<T | undefined> {
   for (let tries = 0; tries < 40; tries++) {
-    const r = await form.show(player);
+    let r: T;
+    try {
+      r = await form.show(player);
+    } catch (e) {
+      // The player left with the form open: nothing to do, and nothing worth a warning.
+      if (e instanceof FormRejectError && e.reason === FormRejectReason.PlayerQuit) return undefined;
+      throw e;
+    }
     if (r.cancelationReason !== FormCancelationReason.UserBusy) return r.canceled ? undefined : r;
     await wait(5);
   }
