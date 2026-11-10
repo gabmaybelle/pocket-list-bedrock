@@ -26,7 +26,8 @@ function changed(player: Player) {
   refresh(player, counted(player));
 }
 
-const line = (c: Counted) => `${c.done ? "§2" : ""}${Math.min(c.have, c.entry.need)}/${c.entry.need} ${entryName(c.entry)}`;
+// No colour codes on buttons: the hovered button turns green and coloured text vanishes on it.
+const line = (c: Counted) => `${Math.min(c.have, c.entry.need)}/${c.entry.need} ${entryName(c.entry)}${c.done ? " - gathered" : ""}`;
 
 /** The list screen: the active list, a button per line, and what you can do with the list. */
 export async function openMenu(player: Player): Promise<void> {
@@ -73,7 +74,8 @@ async function lineMenu(player: Player, c: Counted): Promise<void> {
   }
   if (r.selection === steps.length) {
     const m = await show(new ModalFormData().title(entryName(entry)).textField("How many you need", String(entry.need), { defaultValue: String(entry.need) }).submitButton("Save"), player);
-    const typed = m?.formValues?.[0];
+    if (!m) return;
+    const typed = m.formValues?.[0];
     if (typeof typed === "string" && /^\d+$/.test(typed.trim())) {
       entry.need = clampNeed(Number(typed.trim()));
       changed(player);
@@ -91,11 +93,16 @@ async function lineMenu(player: Player, c: Counted): Promise<void> {
 async function addItem(player: Player): Promise<void> {
   const ask = new ModalFormData().title("Add an item").textField("Type its name", "oak planks", { tooltip: "Part of the name is enough. An id such as minecraft:torch works too, and #minecraft:planks for any planks." }).textField("How many (1 if empty)", "1", { defaultValue: "1" }).submitButton("Search");
   const r = await show(ask, player);
-  if (!r?.formValues) return openMenu(player);
+  if (!r?.formValues) return;
   const query = String(r.formValues[0] ?? "").trim();
   const amountText = String(r.formValues[1] ?? "").trim();
   const amount = /^\d+$/.test(amountText) ? clampNeed(Number(amountText)) : 1;
   if (!query) return openMenu(player);
+  return pickItem(player, query, amount);
+}
+
+/** The items matching what was typed, a button each; an id or a tag is added as it is. */
+async function pickItem(player: Player, query: string, amount: number): Promise<void> {
   const data = dataOf(player);
   // An id or a tag as typed is taken as it is.
   const exact = query.includes(":") || query.startsWith("#") ? resolve(query, amount) : null;
@@ -109,13 +116,15 @@ async function addItem(player: Player): Promise<void> {
   if (!hits.length) {
     const none = new ActionFormData().title("Add an item").body(`No items match "${query}".`).button("Try again").button("Back");
     const n = await show(none, player);
-    return n?.selection === 0 ? addItem(player) : openMenu(player);
+    if (n?.selection === undefined) return;
+    return n.selection === 0 ? addItem(player) : openMenu(player);
   }
   const pick = new ActionFormData().title("Add an item").body(`Add ${amount} of which?`);
   for (const id of hits) pick.button(itemName(id));
   pick.button("Back");
   const p = await show(pick, player);
-  if (p?.selection === undefined || p.selection >= hits.length) return openMenu(player);
+  if (p?.selection === undefined) return;
+  if (p.selection >= hits.length) return openMenu(player);
   const entry = ofItem(hits[p.selection], amount);
   topUp(activeList(data).entries, entry, activeList(data).entries.length);
   changed(player);
@@ -127,7 +136,7 @@ async function addItem(player: Player): Promise<void> {
 async function pasteList(player: Player): Promise<void> {
   const ask = new ModalFormData().title("Paste List").textField("One item per line, or between semicolons, with how many", "64 oak planks; 16 torches", { tooltip: "Such as \"64 oak planks\", \"Torches x16\" or \"minecraft:glass_pane 8\". Lines that match no item are named, never guessed." }).textField("Name the new list (or leave it empty)", "List name").submitButton("Make the list");
   const r = await show(ask, player);
-  if (!r?.formValues) return openMenu(player);
+  if (!r?.formValues) return;
   const text = String(r.formValues[0] ?? "");
   const name = String(r.formValues[1] ?? "");
   if (!text.trim()) {
@@ -151,7 +160,7 @@ async function copyList(player: Player): Promise<void> {
   const list = activeList(dataOf(player));
   const text = writeListText(list, "; ");
   const form = new ModalFormData().title("Copy List").label(list.entries.length ? "Select the text in the box and copy it. Pasted back into Pocket List, it makes the same list." : "This list is empty.").textField("The list as text", text, { defaultValue: text }).submitButton("Done");
-  await show(form, player);
+  if (!(await show(form, player))) return;
   return openMenu(player);
 }
 
@@ -168,7 +177,7 @@ async function lists(player: Player): Promise<void> {
   const data = dataOf(player);
   activeList(data);
   const form = new ActionFormData().title("Lists").body("Tap a list to switch to it.");
-  data.lists.forEach((l, i) => form.button(`${i === data.active ? "§2▶ " : ""}${l.name}§r  (${l.entries.length})`));
+  data.lists.forEach((l, i) => form.button(`${l.name} (${l.entries.length} ${l.entries.length === 1 ? "line" : "lines"})${i === data.active ? " - open now" : ""}`));
   form.divider();
   form.button("New List");
   form.button("Rename this list");
@@ -191,7 +200,8 @@ async function lists(player: Player): Promise<void> {
     case 1: {
       const list = activeList(data);
       const m = await show(new ModalFormData().title("Rename").textField("List name", list.name, { defaultValue: list.name }).submitButton("Save"), player);
-      const typed = m?.formValues?.[0];
+      if (!m) return;
+      const typed = m.formValues?.[0];
       if (typeof typed === "string" && typed.trim()) {
         renameList(list, typed);
         changed(player);
@@ -201,7 +211,8 @@ async function lists(player: Player): Promise<void> {
     case 2: {
       const list = activeList(data);
       const m = await show(new MessageFormData().title("Delete List").body(`Really delete ${list.name} and its ${list.entries.length} lines?`).button1("Delete").button2("Keep it"), player);
-      if (m?.selection === 0) {
+      if (m?.selection === undefined) return;
+      if (m.selection === 0) {
         deleteList(data, data.active);
         changed(player);
       }
@@ -223,7 +234,8 @@ async function settings(player: Player): Promise<void> {
     .toggle("Count nearby containers", { defaultValue: data.countChests, tooltip: "Count what's in the chests, barrels and shulker boxes you've opened within 32 blocks." })
     .submitButton("Save");
   const r = await show(form, player);
-  if (r?.formValues) {
+  if (!r) return;
+  if (r.formValues) {
     const [hud, corner, lines, chests] = r.formValues;
     if (typeof hud === "boolean") data.hud = hud;
     if (typeof corner === "number" && CORNERS[corner]) data.corner = CORNERS[corner];
@@ -233,3 +245,18 @@ async function settings(player: Player): Promise<void> {
   }
   return openMenu(player);
 }
+
+/** Each screen by name, for the test hooks (a test opens a screen without clicking through to it). */
+export const screens: Record<string, (player: Player, arg?: string) => Promise<void>> = {
+  menu: openMenu,
+  add: addItem,
+  pick: (player, arg) => pickItem(player, arg ?? "torch", 16),
+  line: (player) => {
+    const first = counted(player)[0];
+    return first ? lineMenu(player, first) : openMenu(player);
+  },
+  paste: pasteList,
+  copy: copyList,
+  lists,
+  settings,
+};

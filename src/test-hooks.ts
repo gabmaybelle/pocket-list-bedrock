@@ -8,6 +8,7 @@ import { allItemIds, knownId, knownTag, resolve, searchItems, tagMatch } from ".
 import { NS, dataOf, forget, placesOf, saveData } from "./store.js";
 import { counted, totalsFor } from "./count.js";
 import { lastShown } from "./hud.js";
+import { screens } from "./forms.js";
 
 type Json = Record<string, unknown>;
 
@@ -56,6 +57,15 @@ function handle(q: Json): Json {
       if (!player) return { error: `no player ${q.name}` };
       forget(player.id);
       return { data: dataOf(player), places: placesOf(player) };
+    }
+    case "screen": {
+      // Opens one screen for a player by name (the look checks take pictures of each).
+      const player = world.getAllPlayers().find((p) => p.name === q.name);
+      if (!player) return { error: `no player ${q.name}` };
+      const open = screens[q.screen as string];
+      if (!open) return { error: `no screen ${q.screen}` };
+      open(player, q.arg as string | undefined).catch((e) => console.warn(`Pocket List: screen ${q.screen}: ${e}`));
+      return { ok: true };
     }
     case "use_block": {
       // The player used the block there (a simulated player's use may not reach the event).

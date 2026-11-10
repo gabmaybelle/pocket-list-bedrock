@@ -4,8 +4,8 @@
 
 The first Bedrock release of Pocket List. Minecraft Bedrock 1.26.60 or newer, no experiments.
 
-- A checklist in a corner of your screen: each line reads "24/64 Oak Planks" and turns green as you
-  gather it, with a chime and a note when the whole list is done.
+- A checklist in a corner of your screen, on a dark backdrop: each line reads "24/64 Oak Planks" and
+  turns green as you gather it, with a chime and a note when the whole list is done.
 - The list screen: open it with the Pocket List Notebook (two paper and string) or `/pocket_list:open`.
   Keep several lists, rename them, change amounts, search any item by name, and clear off what you've
   gathered. Sneak and use the notebook (or `/pocket_list:toggle`) to hide and show the corner list.

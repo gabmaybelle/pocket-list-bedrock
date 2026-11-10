@@ -75,7 +75,9 @@ export function refresh(player: Player, counted: Counted[]) {
   const text = data.hud ? hudText(list, counted, data.hudLines) : "";
   if (text !== s.text) {
     s.text = text;
-    send(player, s, s.corner, text);
+    // A space at each end of every line pads the text inside its dark box, which is exactly as wide
+    // as the text (so a blank corner draws no box at all).
+    send(player, s, s.corner, text ? text.split("\n").map((l) => ` ${l} `).join("\n") : "");
   }
   celebrate(player, s, list.name, counted);
 }
