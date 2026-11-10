@@ -6,15 +6,15 @@ done.
 
 ## Where things stand
 
-- **Done:** the add-on's first build: the corner list, the notebook and its recipe, the list screen as
+- **Done:** the corner list, the notebook and its recipe, the list screen as
   forms (lines, add by name, Paste List, Copy List, Clear Done, Lists, Settings), counting the
   inventory, offhand and remembered containers live, item tags, lists saved on the player, the welcome
   note and the finish chime. Unit tests, type check, schema check, the headless self-test on the
   release and Preview servers, and a simulated-player run of the whole counting loop pass.
 - **Broken:** nothing known as of this writing. Seen in the game on PC (release 1.26.63) and on an
   iPhone, where a real player's chest counted.
-- **Next:** 0.1.0 release once the look is checked in the game (PC and phone) and the notebook has
-  its real sprite. Break down, from a table of the vanilla recipes, is for 0.2.0.
+- **Next:** the first listing (CurseForge, as a Bedrock add-on). The next feature is Break down,
+  from a table of the vanilla recipes. Releases are on GitHub.
 
 ## Log
 
