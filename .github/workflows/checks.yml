@@ -1,0 +1,52 @@
+# Checks Pocket List for Bedrock on every push and pull request, from a clean copy:
+# - the build (it clones the Java edition's repo for the icon, at the tag in java-source.json),
+#   attached to the run as the .mcaddon
+# - the unit tests (npm test), the scripts against the script API typings (npm run typecheck), and
+#   every pack file against Mojang's and the community schemas (npm run validate)
+# The self-test on a Bedrock Dedicated Server (tools/bds-check.js) is run before a release, not here.
+
+name: checks
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+  pull_request:
+
+# A newer push to the same branch stops the run it replaces.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    # A pull request from a branch in this repo is already checked by its push; only check forks' twice.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+      - name: setup node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+      - name: install
+        run: npm ci
+      - name: build
+        run: npm run build
+      - name: unit tests
+        run: npm test
+      - name: typecheck
+        run: npm run typecheck
+      - name: validate pack files
+        run: npm run validate
+      - name: upload the add-on
+        uses: actions/upload-artifact@v7
+        with:
+          name: PocketList-mcaddon
+          path: dist/*.mcaddon
+          if-no-files-found: error

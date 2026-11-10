@@ -1,0 +1,25 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Pocket List self-test",
+    "description": "Test-only pack for a throwaway test world: runs the checklist on /scriptevent pocket_list:test. Never for a real world.",
+    "uuid": "e03fc4ca-c941-450e-b5a8-35c3088e7224",
+    "version": [0, 1, 0],
+    "min_engine_version": [1, 26, 0]
+  },
+  "modules": [
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "5d3b7c1e-2f4a-4c8d-9e6b-7a1f0c2d3e4f",
+      "version": [0, 1, 0],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.10.0"
+    }
+  ]
+}

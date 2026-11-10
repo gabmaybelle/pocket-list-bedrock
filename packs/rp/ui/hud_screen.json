@@ -1,0 +1,161 @@
+{
+  "namespace": "hud",
+
+  "pl_label_base": {
+    "type": "label",
+    "font_size": "normal",
+    "shadow": true,
+    "localize": false,
+    "color": [1.0, 1.0, 1.0],
+    "text_alignment": "left",
+    "layer": 40
+  },
+
+  "pl_label_tr@hud.pl_label_base": {
+    "anchor_from": "top_right",
+    "anchor_to": "top_right",
+    "offset": [-6, 6],
+    "text": "#text",
+    "controls": [
+      {
+        "pl_tr_data": {
+          "type": "panel",
+          "size": [0, 0],
+          "property_bag": { "#preserved_text": "" },
+          "bindings": [
+            { "binding_name": "#hud_title_text_string" },
+            { "binding_name": "#hud_title_text_string", "binding_name_override": "#preserved_text", "binding_condition": "visibility_changed" },
+            { "binding_type": "view", "source_property_name": "(not (#hud_title_text_string = #preserved_text) and not ((#hud_title_text_string - '[pl:tr]') = #hud_title_text_string))", "target_property_name": "#visible" }
+          ]
+        }
+      }
+    ],
+    "bindings": [
+      { "binding_type": "view", "source_control_name": "pl_tr_data", "source_property_name": "(#preserved_text - '[pl:tr]')", "target_property_name": "#text" }
+    ]
+  },
+
+  "pl_label_tl@hud.pl_label_base": {
+    "anchor_from": "top_left",
+    "anchor_to": "top_left",
+    "offset": [6, 6],
+    "text": "#text",
+    "controls": [
+      {
+        "pl_tl_data": {
+          "type": "panel",
+          "size": [0, 0],
+          "property_bag": { "#preserved_text": "" },
+          "bindings": [
+            { "binding_name": "#hud_title_text_string" },
+            { "binding_name": "#hud_title_text_string", "binding_name_override": "#preserved_text", "binding_condition": "visibility_changed" },
+            { "binding_type": "view", "source_property_name": "(not (#hud_title_text_string = #preserved_text) and not ((#hud_title_text_string - '[pl:tl]') = #hud_title_text_string))", "target_property_name": "#visible" }
+          ]
+        }
+      }
+    ],
+    "bindings": [
+      { "binding_type": "view", "source_control_name": "pl_tl_data", "source_property_name": "(#preserved_text - '[pl:tl]')", "target_property_name": "#text" }
+    ]
+  },
+
+  "pl_label_br@hud.pl_label_base": {
+    "anchor_from": "bottom_right",
+    "anchor_to": "bottom_right",
+    "offset": [-6, -6],
+    "text": "#text",
+    "controls": [
+      {
+        "pl_br_data": {
+          "type": "panel",
+          "size": [0, 0],
+          "property_bag": { "#preserved_text": "" },
+          "bindings": [
+            { "binding_name": "#hud_title_text_string" },
+            { "binding_name": "#hud_title_text_string", "binding_name_override": "#preserved_text", "binding_condition": "visibility_changed" },
+            { "binding_type": "view", "source_property_name": "(not (#hud_title_text_string = #preserved_text) and not ((#hud_title_text_string - '[pl:br]') = #hud_title_text_string))", "target_property_name": "#visible" }
+          ]
+        }
+      }
+    ],
+    "bindings": [
+      { "binding_type": "view", "source_control_name": "pl_br_data", "source_property_name": "(#preserved_text - '[pl:br]')", "target_property_name": "#text" }
+    ]
+  },
+
+  "pl_label_bl@hud.pl_label_base": {
+    "anchor_from": "bottom_left",
+    "anchor_to": "bottom_left",
+    "offset": [6, -6],
+    "text": "#text",
+    "controls": [
+      {
+        "pl_bl_data": {
+          "type": "panel",
+          "size": [0, 0],
+          "property_bag": { "#preserved_text": "" },
+          "bindings": [
+            { "binding_name": "#hud_title_text_string" },
+            { "binding_name": "#hud_title_text_string", "binding_name_override": "#preserved_text", "binding_condition": "visibility_changed" },
+            { "binding_type": "view", "source_property_name": "(not (#hud_title_text_string = #preserved_text) and not ((#hud_title_text_string - '[pl:bl]') = #hud_title_text_string))", "target_property_name": "#visible" }
+          ]
+        }
+      }
+    ],
+    "bindings": [
+      { "binding_type": "view", "source_control_name": "pl_bl_data", "source_property_name": "(#preserved_text - '[pl:bl]')", "target_property_name": "#text" }
+    ]
+  },
+
+  "pl_hud": {
+    "type": "panel",
+    "size": ["100%", "100%"],
+    "layer": 40,
+    "controls": [
+      { "pl_top_right@hud.pl_label_tr": {} },
+      { "pl_top_left@hud.pl_label_tl": {} },
+      { "pl_bottom_right@hud.pl_label_br": {} },
+      { "pl_bottom_left@hud.pl_label_bl": {} }
+    ]
+  },
+
+  "root_panel": {
+    "modifications": [
+      {
+        "array_name": "controls",
+        "operation": "insert_back",
+        "value": {
+          "pl_hud@hud.pl_hud": {}
+        }
+      }
+    ]
+  },
+
+  "hud_title_text/title_frame/title": {
+    "modifications": [
+      {
+        "array_name": "bindings",
+        "operation": "insert_back",
+        "value": {
+          "binding_type": "view",
+          "source_property_name": "((#text - '[pl:') = #text)",
+          "target_property_name": "#visible"
+        }
+      }
+    ]
+  },
+
+  "hud_title_text/title_frame/title_background": {
+    "bindings": [
+      {
+        "binding_name": "#hud_title_text_string",
+        "binding_type": "global"
+      },
+      {
+        "binding_type": "view",
+        "source_property_name": "((#hud_title_text_string - '[pl:') = #hud_title_text_string)",
+        "target_property_name": "#visible"
+      }
+    ]
+  }
+}

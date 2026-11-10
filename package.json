@@ -1,0 +1,20 @@
+{
+  "name": "pocket-list-bedrock",
+  "version": "0.1.0",
+  "description": "Pocket List for Minecraft Bedrock: a little checklist in the corner of your screen that ticks itself off as you gather.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "node tools/build.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "validate": "node tools/validate.js",
+    "test": "node --test tools/test/*.test.js"
+  },
+  "devDependencies": {
+    "@minecraft/server": "2.10.0",
+    "@minecraft/server-ui": "2.2.0",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "typescript": "5.9.3"
+  }
+}

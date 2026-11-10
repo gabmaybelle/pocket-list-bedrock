@@ -1,0 +1,22 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Pocket List",
+    "description": "A little checklist in the corner of your screen that ticks itself off as you gather. Resource pack.",
+    "uuid": "0ac5b46d-31d4-4841-b305-918d5d4826be",
+    "version": [0, 1, 0],
+    "min_engine_version": [1, 26, 0]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "aaac2279-9484-453c-bb3a-330ee91248bf",
+      "version": [0, 1, 0]
+    }
+  ],
+  "metadata": {
+    "authors": ["Gabby"],
+    "license": "MIT",
+    "url": "https://github.com/gabmaybelle/pocket-list-bedrock"
+  }
+}

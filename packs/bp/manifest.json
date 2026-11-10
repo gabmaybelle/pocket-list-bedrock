@@ -1,0 +1,43 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Pocket List",
+    "description": "A little checklist in the corner of your screen that ticks itself off as you gather. Behaviour pack.",
+    "uuid": "47d6eda0-a6fb-40dc-afd6-61eec8447a66",
+    "version": [0, 1, 0],
+    "min_engine_version": [1, 26, 0]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "a06e990a-3caf-4359-a207-5974c1401d0d",
+      "version": [0, 1, 0]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "969a83cd-7971-4bf3-9b0f-42ab2f5f1b1b",
+      "version": [0, 1, 0],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.10.0"
+    },
+    {
+      "module_name": "@minecraft/server-ui",
+      "version": "2.2.0"
+    },
+    {
+      "uuid": "0ac5b46d-31d4-4841-b305-918d5d4826be",
+      "version": [0, 1, 0]
+    }
+  ],
+  "metadata": {
+    "authors": ["Gabby"],
+    "license": "MIT",
+    "url": "https://github.com/gabmaybelle/pocket-list-bedrock"
+  }
+}

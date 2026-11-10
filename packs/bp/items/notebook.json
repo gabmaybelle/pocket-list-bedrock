@@ -1,0 +1,14 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "pocket_list:notebook",
+      "menu_category": { "category": "items", "group": "minecraft:itemGroup.name.miscFood" }
+    },
+    "components": {
+      "minecraft:icon": "pocket_list_notebook",
+      "minecraft:display_name": { "value": "item.pocket_list.notebook" },
+      "minecraft:max_stack_size": 1
+    }
+  }
+}
